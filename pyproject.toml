@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "dqn"
+version = "0.1.0"
+description = ""
+authors = ["raufer <raufer92@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+jupyterlab = "^3.0.16"
+torch = "^1.9.0"
+numpy = "^1.20.3"
+torchvision = "^0.10.0"
+gym = "^0.18.3"
+matplotlib = "^3.4.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

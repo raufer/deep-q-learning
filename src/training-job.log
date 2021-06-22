@@ -1,0 +1,1 @@
+(asctime)s, (name)s, (levelname)-8s [(filename)s:(lineno)d] (message)s, src, INFO     [__init__.py:45] Device detected 'cpu'
