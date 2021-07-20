@@ -32,4 +32,56 @@ def plot_durations(episode_durations):
     plt.pause(0.001)
 
 
+def plot_loss(loss_log):
+    """
+    The plot will be underneath the cell containing the main training loop,
+    and will update after every episode.
+    """
+    plt.figure(3)
+    plt.clf()
 
+    plt.title('Huber Loss')
+    plt.xlabel('Step')
+    plt.ylabel('Loss')
+
+    plt.plot(loss_log)
+
+    # pause a bit so that plots are updated
+    plt.pause(0.001)
+
+
+def plot_gradient(gradient_log):
+    plt.figure(4)
+    plt.clf()
+    plt.title('Gradient average at the different layers')
+    plt.xlabel('Step')
+    plt.ylabel('W Magnitude')
+    plt.plot(gradient_log['head'], label='head')
+    plt.legend(loc="upper right")
+
+    plt.figure(5)
+    plt.clf()
+    plt.title('Gradient average at the different layers')
+    plt.xlabel('Step')
+    plt.ylabel('W Magnitude')
+    plt.plot(gradient_log['conv1'], label='conv1')
+    plt.plot(gradient_log['conv2'], label='conv2')
+    plt.plot(gradient_log['conv3'], label='conv3')
+    plt.legend(loc="upper right")
+
+    # pause a bit so that plots are updated
+    plt.pause(0.001)
+
+
+def plot_lr(lr_log):
+    plt.figure(6)
+    plt.clf()
+
+    plt.title('Learning Rate Evolution')
+    plt.xlabel('Step')
+    plt.ylabel('lr')
+
+    plt.plot(lr_log)
+
+    # pause a bit so that plots are updated
+    plt.pause(0.001)

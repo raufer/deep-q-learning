@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     plt.figure()
     img = get_screen(env).cpu().squeeze(0).permute(1, 2, 0).numpy()
-    plt.imshow(img, interpolation='none')
+    plt.imshow(img, cmap='gray')
     plt.show(block=True)
     # plt.imsave(os.path.join(images_dir, 'sample-screen.png'), img)
     # plt.savefig(os.path.join(images_dir, 'sample-screen.png'))

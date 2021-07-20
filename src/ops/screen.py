@@ -5,36 +5,44 @@ import torchvision.transforms as T
 from PIL import Image
 
 from src import device
+from src.config import config
 from src.constants import SCREEN_WIDTH
 
 
 resize_op = T.Compose([
     T.ToPILImage(),
-    T.Resize(40, interpolation=Image.CUBIC),
+    T.Resize(config.RESIZE_PIXELS, interpolation=Image.CUBIC),
+    # T.Grayscale(),
     T.ToTensor()
 ])
 
 
-def get_cart_location(env) -> int:
+nn_inputs = config.FRAMES
+
+
+def get_cart_location(env, screen_width) -> int:
     world_width = env.x_threshold * 2
-    scale = SCREEN_WIDTH / world_width
-    # middle of the cart
-    return int(env.state[0] * scale + SCREEN_WIDTH / 2.0)
+    scale = screen_width / world_width
+    return int(env.state[0] * scale + screen_width / 2.0)  # MIDDLE OF CART
 
 
 def get_screen(env):
-
+    """
+    Gym returns a screen of (400 x 600 x 3), but it is sometimes
+    larger (800 x 1200 x 3)
+    """
     # transpose into torch order (CHW)
-    screen = env.render(mode='rgb_array').transpose( (2, 0, 1))
+    screen = env.render(mode='rgb_array').transpose((2, 0, 1))
 
-    # Strip off the top and bottom of the screen
-    screen = screen[:, 160:320]
-    view_width = 320
+    # Cart is in the lower half, so strip off the top and bottom of the screen
+    _, screen_height, screen_width = screen.shape
+    screen = screen[:, int(screen_height*0.4):int(screen_height * 0.8)]
+    view_width = int(screen_width * 0.6)
 
-    cart_location = get_cart_location(env)
+    cart_location = get_cart_location(env, screen_width)
     if cart_location < view_width // 2:
         slice_range = slice(view_width)
-    elif cart_location > (SCREEN_WIDTH - view_width // 2):
+    elif cart_location > (screen_width - view_width // 2):
         slice_range = slice(-view_width, None)
     else:
         slice_range = slice(cart_location - view_width // 2, cart_location + view_width // 2)
@@ -42,15 +50,13 @@ def get_screen(env):
     # Strip off the edges, so that we have a square image centered on a cart
     screen = screen[:, :, slice_range]
 
-    # Convert to float, rescare, convert to torch tensor
+    # Convert to float, rescale, convert to torch tensor
     # (this doesn't require a copy)
     screen = np.ascontiguousarray(screen, dtype=np.float32) / 255
-
     screen = torch.from_numpy(screen)
 
     # Resize, and add a batch dimension (BCHW)
     return resize_op(screen).unsqueeze(0).to(device)
-
 
 
 
